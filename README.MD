@@ -11,4 +11,5 @@ System Requirement:
     Windows OS
     Chrome
 
-
+Requirement:
+    pip install psutil

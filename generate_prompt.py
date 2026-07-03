@@ -63,8 +63,9 @@ def _parse_formatted_prompt(Formatted_prompt : dict):
 if __name__ == "__main__":
     range = Range(('A', 1), ('B', 1))
     g_p = generate_prompt("English", "Shabu", 3, range, 2)
-    print(_parse_formatted_prompt(g_p))
-
+    p =_parse_formatted_prompt(g_p)
+    for line in p:
+        print(line)
 
 """
 Beginner (A1) – Can understand and use simple words and phrases. Can introduce themselves and ask basic questions.
