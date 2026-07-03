@@ -1,4 +1,4 @@
-from generate_prompt import prompt, Range
+from generate_prompt import generate_prompt, _parse_formatted_prompt, Range
 
 
 
@@ -10,7 +10,8 @@ def main():
     to_character, to_number = input("Difficulty ends with level?: ")
     range = Range((to_character, int(to_number)), (from_character, int(from_number)))
     number_of_questions = int(input("Number of questions you want per sections: "))
-    print(prompt(langauge, topic, number_of_paragraph, range, number_of_questions))
+    p = generate_prompt(langauge, topic, number_of_paragraph, range, number_of_questions)
+    print(_parse_formatted_prompt(p))
 
 
 
