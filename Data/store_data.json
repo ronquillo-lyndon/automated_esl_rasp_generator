@@ -1,11 +1,14 @@
 {
-    "raw_prompt" : {
+    "raw_prompt": {
         "language": "",
         "topic": "",
         "number_of_paragraph": 0,
-        "difficulty_range": {"difficulty_range_from": "", "difficulty_range_to": ""},
-        "number_of_question": 0
+        "difficulty_range": {
+            "difficulty_range_from": "",
+            "difficulty_range_to": ""
+        },
+        "number_of_question": 1
     },
-    "formatted_prompt" : "",
+    "formatted_prompt": "",
     "response": ""
 }
