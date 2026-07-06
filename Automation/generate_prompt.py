@@ -66,12 +66,3 @@ if __name__ == "__main__":
     p =_parse_formatted_prompt(g_p)
     for line in p:
         print(line)
-
-"""
-Beginner (A1) – Can understand and use simple words and phrases. Can introduce themselves and ask basic questions.
-Elementary (A2) – Can communicate in everyday situations, such as shopping, ordering food, and talking about routines.
-Intermediate (B1) – Can handle most travel situations, discuss familiar topics, and understand the main points of clear speech.
-Upper Intermediate (B2) – Can communicate fluently on many topics, understand more complex texts, and express opinions clearly.
-Advanced (C1) – Can use English effectively for work, study, and social situations with good accuracy and flexibility.
-Proficient (C2) – Can understand and use English at a level close to that of a highly educated native speaker.
-"""

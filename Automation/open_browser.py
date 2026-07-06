@@ -4,7 +4,7 @@ import pyautogui
 import pyperclip #for copying to clipboard
 import time
 
-from generate_prompt import Rang, generate_prompt, _parse_formatted_prompt
+from Automation.generate_prompt import Rang, generate_prompt, _parse_formatted_prompt
 
 def _get_monitor_size():
     width = 0
@@ -67,9 +67,17 @@ def automate_browser(prompt):
     _open_browser()
     _auto_prompt(prompt)
 
-if __name__ == "__main__":
+def _test():
     rang = Rang(('A', 1), ('B', 1))
     g_p = generate_prompt("English", "Shabu", 3, rang, 2)
     prompt = _parse_formatted_prompt(g_p)
     time.sleep(1)
     automate_browser(prompt)     
+
+if __name__ == "__main__":
+    rang = Rang(('A', 1), ('B', 1))
+    g_p = generate_prompt("English", "Shabu", 3, rang, 2)
+    prompt = _parse_formatted_prompt(g_p)
+    time.sleep(1)
+    print(prompt)
+    #automate_browser(prompt)     

@@ -1,26 +1,13 @@
+#For dubbing only
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import customtkinter as ctk
-from open_browser import _get_monitor_size
 
-difficulty_range = {"A1": "Beginner", 
-                    "A2": "Elementary",
-                    "B1": "Intermediate",
-                    "B2": "Upper Intermediate",
-                    "C1": "Advanced",
-                    "C2": "Proficient",
-                    }
-
-def _getValues_difficulty_range():
-    range_temp = []
-    index = -1
-    for difficulty in difficulty_range.values():
-        index += 1
-        range_temp.insert(index, difficulty)
-
-    return range_temp
-
-def _getKey_diffculty_range(difficulty_range_value):
-    key = [k for k, v in difficulty_range.items() if v == difficulty_range_value]
-    return key
+from Automation.open_browser import _get_monitor_size, _test
+from Utils.data_helper import _getValues_difficulty_range, _getKey_diffculty_range
 
 #Customize button helper for number of paragraph (nof) input
 def _increase(nof : ctk.CTkEntry):
@@ -43,7 +30,7 @@ def _user_interface():
 
     # Customizing a button
     def submit():
-        pass
+        _test()
 
     custom_button = ctk.CTkButton(
         master=app, 
