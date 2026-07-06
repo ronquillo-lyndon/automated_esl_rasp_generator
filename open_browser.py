@@ -1,33 +1,10 @@
-import psutil
-import webbrowser
-import pygetwindow as gw
+import subprocess
 from screeninfo import get_monitors
 import pyautogui
 import pyperclip #for copying to clipboard
 import time
 
 from generate_prompt import Rang, generate_prompt, _parse_formatted_prompt
-
-#from playwright.sync_api import sync_playwright
-
-
-BROWSERS = {
-    "chrome": ["chrome.exe", "google-chrome", "chrome"],
-    "firefox": ["firefox.exe", "firefox"],
-    "edge": ["msedge.exe", "msedge"],
-    "opera": ["opera.exe", "opera"],
-    "brave": ["brave.exe", "brave"],
-}
-
-def _is_browser_running(browser):
-    names = BROWSERS.get(browser.lower(), [])
-    for proc in psutil.process_iter(["name"]):
-        try:
-            if proc.info["name"] and proc.info["name"].lower() in names:
-                return True
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            pass
-    return False
 
 def _get_monitor_size():
     width = 0
@@ -38,19 +15,18 @@ def _get_monitor_size():
 
     return width, height
 
+w, h = _get_monitor_size()
 
 def automate_browser(prompt):
     def _open_browser():
-        webbrowser.open("https://www.google.com")
-        while True:
-            windows = gw.getWindowsWithTitle("Google")
-            if windows:
-                windows[0].activate()
-                break
-            time.sleep(0.2)
+        subprocess.Popen([
+            r"C:/Program Files/Google/Chrome\Application/chrome.exe",
+            "--start-maximized",
+            "--profile-directory=Profile 1",   
+        ])
+        time.sleep(0.5)
     
     def _auto_copy_response(delay):
-        w, h = _get_monitor_size()
         time.sleep(delay)
 
         # Click the start
@@ -71,6 +47,9 @@ def automate_browser(prompt):
 
         print(pyperclip.paste())
 
+        pyautogui.click((w * .99), (h * .01))
+        time.sleep(0.5)
+        pyautogui.click((w * .99), (h * .01))
 
     def _auto_prompt(prompt):
         time.sleep(3)
@@ -85,14 +64,8 @@ def automate_browser(prompt):
 
         _auto_copy_response(15)
 
-
-    if not _is_browser_running("chrome"):
-        print("_is_browser_running")
-        _open_browser()
-        _auto_prompt(prompt)
-    else:
-        print("not _is_browser_running")
-        _auto_prompt(prompt)
+    _open_browser()
+    _auto_prompt(prompt)
 
 if __name__ == "__main__":
     rang = Rang(('A', 1), ('B', 1))
