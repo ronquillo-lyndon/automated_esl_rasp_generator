@@ -1,11 +1,21 @@
 import json
 
+# data as single object
+class RawData:
+    def __init__(self, language="", topic="", number_of_paragraph=0, drf="", drt="", number_of_question=0):
+        self.language=language,
+        self.topic=topic,
+        self.number_of_paragraph=number_of_paragraph,
+        self.drf = drf,
+        self.drt =drt,
+        self.number_of_question=number_of_question
+
+        
 # Helpers for getting difficulties of ESL
 def _get_difficulty_range():
     with open("Data/difficulty_range.json", "r", encoding="utf-8") as file:
         difficulty_range = json.load(file)
     return difficulty_range
-
 
 def _getValues_difficulty_range():
     difficulty_range = _get_difficulty_range()
@@ -70,16 +80,16 @@ def _reset_response():
         json.dump(store_data, file, indent=4)
 
 # Setters
-def _reset_raw_prompt(language="",topic="",number_of_paragraph=0,drf="",drt="", number_of_question=0):
+def _set_raw_prompt(raw : RawData):
     with open("Data/store_data.json", "r", encoding="utf-8") as file:
         store_data  = json.load(file)
 
         store_data["raw_prompt"] = {
-            "language": f"{language}",
-            "topic": f"{topic}",
-            "number_of_paragraph": number_of_paragraph,
-            "difficulty_range": {"difficulty_range_from": f"{drf}", "difficulty_range_to": f"{drt}"},
-            "number_of_question": {number_of_question}
+            "language": f"{raw.language}",
+            "topic": f"{raw.topic}",
+            "number_of_paragraph": raw.number_of_paragraph,
+            "difficulty_range": {"difficulty_range_from": f"{raw.drf}", "difficulty_range_to": f"{raw.drt}"},
+            "number_of_question": {raw.number_of_question}
         }
     with open("Data/store_data.json", "w") as file:
         json.dump(store_data, file, indent=4)
@@ -99,6 +109,7 @@ def _set_response(response):
     store_data["response"] = f"{response}"
     with open("Data/store_data.json", "w") as file:
         json.dump(store_data, file, indent=4)
+
 
 if __name__ == "__main__":
     pass

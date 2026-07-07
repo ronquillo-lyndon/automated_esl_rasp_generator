@@ -1,21 +1,12 @@
 import subprocess
-from screeninfo import get_monitors
 import pyautogui
 import pyperclip #for copying to clipboard
 import time
 
 from Automation.generate_prompt import Rang, generate_prompt, _parse_formatted_prompt
+from Utils import user_interface_helper as uih
 
-def _get_monitor_size():
-    width = 0
-    height = 0
-    for monitor in get_monitors():
-        width = monitor.width
-        height = monitor.height
-
-    return width, height
-
-w, h = _get_monitor_size()
+w, h = uih._get_monitor_size()
 
 def automate_browser(prompt):
     def _open_browser():

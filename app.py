@@ -1,4 +1,4 @@
-from generate_prompt import generate_prompt, _parse_formatted_prompt, Range
+from Automation.generate_prompt import generate_prompt, _parse_formatted_prompt, Range
 
 
 
@@ -13,7 +13,14 @@ def main():
     p = generate_prompt(langauge, topic, number_of_paragraph, range, number_of_questions)
     print(_parse_formatted_prompt(p))
 
+def _get_monitor_size():
+    width = 0
+    height = 0
+    for monitor in get_monitors():
+        width = monitor.width
+        height = monitor.height
 
+    return width, height
 
 if __name__ == "__main__":
     main()
