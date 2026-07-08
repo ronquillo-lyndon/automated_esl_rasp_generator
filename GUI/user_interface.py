@@ -22,11 +22,47 @@ def user_interface():
     #data
     store_raw_data = dh.RawData()
     
+    #State of input when required
+    input_state = {"topic": False, "nop": False, "noq": False}
+
     #Dropdown inputs
     language = ctk.StringVar(value="English")
     difficulty_range_from = ctk.StringVar(value=difficulty_range_placeholder)
     difficulty_range_to = ctk.StringVar(value=difficulty_range_placeholder)
 
+    #topic dropdown
+    topic_input = uih.input_widget(
+        app,
+        lambda parent: ctk.CTkEntry(
+        parent,
+        placeholder_text="(e.g. Music)",
+        ), 
+        lambda parent: uih._custom_input_label(parent, "Topic"),
+        lambda parent: uih._custom_input_warning_label(parent, lambda: input_state["topic"]),
+        )
+    
+    #number of questions
+    number_of_question = uih.input_widget(
+        app,
+        lambda parent: ctk.CTkEntry(
+        parent,
+        placeholder_text="Recommend: 3",
+        ), 
+        lambda parent: uih._custom_input_label(parent, "Number of Questions"),
+        lambda parent: uih._custom_input_warning_label(parent, lambda: input_state["noq"]),
+        )
+    
+    #number of paragraph
+    number_of_paragraph = uih.input_widget(
+        app,
+        lambda parent: ctk.CTkEntry(
+        parent,
+        placeholder_text="Recommend: 3",
+        ), 
+        lambda parent: uih._custom_input_label(parent, "Number of Paragraphs"),
+        lambda parent: uih._custom_input_warning_label(parent, lambda: input_state["nop"]),
+        )
+    
     #langauge dropdown
     language_input = uih.input_widget(
         app,
@@ -36,33 +72,8 @@ def user_interface():
         variable=language
         ), 
         lambda parent: uih._custom_input_label(parent, "Language"),
-        lambda parent: uih._custom_input_warning_label(parent, False),
+        lambda parent: uih._custom_input_warning_label(parent, lambda: False),
         )
-    language_input.pack(padx=20, pady=10)
-
-    #langauge dropdown
-    topic_input = uih.input_widget(
-        app,
-        lambda parent: ctk.CTkEntry(
-        parent,
-        placeholder_text="(e.g. Music)",
-        ), 
-        lambda parent: uih._custom_input_label(parent, "Topic"),
-        lambda parent: uih._custom_input_warning_label(parent, True),
-        )
-    topic_input.pack(padx=20, pady=10)
-
-    #number of paragraph
-    number_of_paragraph = uih.input_widget(
-        app,
-        lambda parent: ctk.CTkEntry(
-        parent,
-        placeholder_text="Recommend: 3",
-        ), 
-        lambda parent: uih._custom_input_label(parent, "Number of Paragraphs"),
-        lambda parent: uih._custom_input_warning_label(parent, True),
-        )
-    number_of_paragraph.pack(padx=20, pady=10)
 
     #difficulty ranging from
     difficulty_range_from_dropdown = uih.input_widget(
@@ -73,9 +84,8 @@ def user_interface():
         variable=difficulty_range_from
         ), 
         lambda parent: uih._custom_input_label(parent, "Difficulty ranging from"),
-        lambda parent: uih._custom_input_warning_label(parent, False),
+        lambda parent: uih._custom_input_warning_label(parent, lambda: False),
         )
-    difficulty_range_from_dropdown.pack(padx=20, pady=10)
 
     #difficulty ranging to
     difficulty_range_to_dropdown = uih.input_widget(
@@ -86,38 +96,84 @@ def user_interface():
         variable=difficulty_range_to
         ), 
         lambda parent: uih._custom_input_label(parent, "Difficulty ranging from"),
-        lambda parent: uih._custom_input_warning_label(parent, False),
+        lambda parent: uih._custom_input_warning_label(parent, lambda: False),
         )
-    difficulty_range_to_dropdown.pack(padx=20, pady=10)
 
-    #number of questions
-    number_of_question = uih.input_widget(
-        app,
-        lambda parent: ctk.CTkEntry(
-        parent,
-        placeholder_text="Recommend: 3",
-        ), 
-        lambda parent: uih._custom_input_label(parent, "Number of Questions"),
-        lambda parent: uih._custom_input_warning_label(parent, True),
-        )
+    #UX
+    language_input.pack(padx=20, pady=10)
+    topic_input.pack(padx=20, pady=10)
+    number_of_paragraph.pack(padx=20, pady=10)
+    difficulty_range_from_dropdown.pack(padx=20, pady=10)
+    difficulty_range_to_dropdown.pack(padx=20, pady=10)
     number_of_question.pack(padx=20, pady=10)
 
     #Verify valid inputs
     def submit():
-        
+        approve = 0 
+
+        #Dropdown
         store_raw_data.language = language.get()
-        store_raw_data.topic = topic_input.entry.get()
-        store_raw_data.number_of_paragraph = number_of_paragraph.entry.get()
         store_raw_data.drf = dh._getKey_diffculty_range(difficulty_range_from.get())
         store_raw_data.drt = dh._getKey_diffculty_range(difficulty_range_to.get())
+        
+        #Input
+        store_raw_data.topic = topic_input.entry.get()
+        store_raw_data.number_of_paragraph = number_of_paragraph.entry.get()
         store_raw_data.number_of_question = number_of_question.entry.get()
-        print(language.get())
-        print(topic_input.entry.get())
-        print(number_of_paragraph.entry.get())
-        print(difficulty_range_from.get())
-        print(difficulty_range_to.get())
-        print(number_of_question.entry.get())
-        #test
+    
+        if topic_input.entry.get() == "":
+            input_state["topic"] = True
+        else:
+            input_state["topic"] = False
+        
+        temp_nop = number_of_paragraph.entry.get()
+        if temp_nop == "":
+            print("Invalid no input")
+            input_state["nop"] = True
+        else:
+            try:
+                temp_nop = int(temp_nop)
+                if 1 <= temp_nop and 5 >= temp_nop:
+                    input_state["nop"] = False
+                    print("Valid")
+                else:
+                    input_state["nop"] = True
+                    print("Invalid input")
+            except:
+                print("except: invalid input")
+                input_state["nop"] = True
+        
+        temp_noq = number_of_question.entry.get()
+        if temp_noq == "":
+            print("Invalid no input")
+            input_state["noq"] = True
+        else:
+            try:
+                temp_noq = int(temp_noq)
+                if 1 <= temp_noq and 5 >= temp_noq:
+                    input_state["noq"] = False
+                    print("Valid")
+                else:
+                    input_state["noq"] = True
+                    print("Invalid input")
+            except:
+                print("except: invalid input")
+                input_state["noq"] = True
+        
+        # Show Warning(s)
+        topic_input.refresh()
+        number_of_paragraph.refresh()
+        number_of_question.refresh()
+
+        #Count-Check if all the required input are False
+        for key, value in input_state.items():
+            if value == True:
+                approve += 1
+
+        if approve == 3:
+            print("Cannot be proceeded due to missing value")
+
+        # #test
         # c1, n1 = store_raw_data.drf
         # c2, n2 = store_raw_data.drt
         # rang = gp.Rang((c1, n1), (c2, n2))
@@ -128,12 +184,13 @@ def user_interface():
         # op.automate_browser(prompt)   
 
         # dh._set_raw_prompt(store_raw_data)
+
     def reset():
         dh._reset_raw_prompt()
     submit_button = uih.custom_button(app, submit, "Submit")
     reset_button = uih.custom_button(app, reset, 'Reset')
-    submit_button.pack(padx=20, pady=10)
-    reset_button.pack(padx=20, pady=10)
+    submit_button.pack(padx=20, pady=5)
+    reset_button.pack(padx=20, pady=5)
     app.mainloop()
 
 if __name__ == "__main__":
