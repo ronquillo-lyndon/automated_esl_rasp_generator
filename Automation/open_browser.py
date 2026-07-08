@@ -58,12 +58,6 @@ def automate_browser(prompt):
     _open_browser()
     _auto_prompt(prompt)
 
-def _test():
-    rang = Rang(('A', 1), ('B', 1))
-    g_p = generate_prompt("English", "Shabu", 3, rang, 2)
-    prompt = _parse_formatted_prompt(g_p)
-    time.sleep(1)
-    automate_browser(prompt)     
 
 if __name__ == "__main__":
     rang = Rang(('A', 1), ('B', 1))

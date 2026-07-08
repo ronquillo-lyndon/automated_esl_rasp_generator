@@ -1,13 +1,13 @@
 {
     "raw_prompt": {
-        "language": "",
-        "topic": "",
-        "number_of_paragraph": 0,
+        "language": "English",
+        "topic": "Water",
+        "number_of_paragraph": "3",
         "difficulty_range": {
-            "difficulty_range_from": "",
-            "difficulty_range_to": ""
+            "difficulty_range_from": "A1",
+            "difficulty_range_to": "C2"
         },
-        "number_of_question": 1
+        "number_of_question": "3"
     },
     "formatted_prompt": "",
     "response": ""

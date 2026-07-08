@@ -3,14 +3,14 @@ import json
 # data as single object
 class RawData:
     def __init__(self, language="", topic="", number_of_paragraph=0, drf="", drt="", number_of_question=0):
-        self.language=language,
-        self.topic=topic,
-        self.number_of_paragraph=number_of_paragraph,
-        self.drf = drf,
-        self.drt =drt,
+        self.language=language
+        self.topic=topic
+        self.number_of_paragraph=number_of_paragraph
+        self.drf = drf
+        self.drt =drt
         self.number_of_question=number_of_question
 
-        
+ 
 # Helpers for getting difficulties of ESL
 def _get_difficulty_range():
     with open("Data/difficulty_range.json", "r", encoding="utf-8") as file:
@@ -30,7 +30,7 @@ def _getValues_difficulty_range():
 def _getKey_diffculty_range(difficulty_range_value):
     difficulty_range = _get_difficulty_range()
     key = [k for k, v in difficulty_range.items() if v == difficulty_range_value]
-    return key
+    return key[0]
 
 # Helpers for prompt
 # raw prompt
@@ -83,13 +83,13 @@ def _reset_response():
 def _set_raw_prompt(raw : RawData):
     with open("Data/store_data.json", "r", encoding="utf-8") as file:
         store_data  = json.load(file)
-
-        store_data["raw_prompt"] = {
-            "language": f"{raw.language}",
-            "topic": f"{raw.topic}",
+        
+    store_data["raw_prompt"] = {
+            "language": raw.language,
+            "topic": raw.topic,
             "number_of_paragraph": raw.number_of_paragraph,
-            "difficulty_range": {"difficulty_range_from": f"{raw.drf}", "difficulty_range_to": f"{raw.drt}"},
-            "number_of_question": {raw.number_of_question}
+            "difficulty_range": {"difficulty_range_from": raw.drf, "difficulty_range_to": raw.drt},
+            "number_of_question": raw.number_of_question
         }
     with open("Data/store_data.json", "w") as file:
         json.dump(store_data, file, indent=4)
@@ -110,6 +110,11 @@ def _set_response(response):
     with open("Data/store_data.json", "w") as file:
         json.dump(store_data, file, indent=4)
 
+#Language
+def _get_languages():
+    with open("Data/language.json", "r", encoding="utf-8") as file:
+        language = json.load(file)
+    return language
 
 if __name__ == "__main__":
     pass
