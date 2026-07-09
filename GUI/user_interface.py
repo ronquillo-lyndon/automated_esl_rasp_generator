@@ -16,10 +16,12 @@ from Automation import open_browser as op
 def user_interface():
     w,h=uih._get_monitor_size()
     app = ctk.CTk()
-    app.geometry(f"{(int(w/2))}x{int(h/2)}")
+    app.geometry(f"{(int(w/2))}x{int(h/1.8)}")
     app.title("Automated ESL RASP Generator")
     ctk.set_appearance_mode("Dark")
     ctk.set_default_color_theme("blue")
+    response = ""
+
     difficulty_range_placeholder = dh._getValues_difficulty_range()[0]
 
     #data
@@ -33,9 +35,21 @@ def user_interface():
     difficulty_range_from = ctk.StringVar(value=difficulty_range_placeholder)
     difficulty_range_to = ctk.StringVar(value=difficulty_range_placeholder)
 
+
+    #UX
+    app.grid_columnconfigure((0, 0), weight=1)
+    app.grid_columnconfigure((0, 1), weight=1)
+    app.grid_columnconfigure((0, 2), weight=1)
+    left_frame = ctk.CTkFrame(app)
+    right_frame = ctk.CTkFrame(app)
+    left_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
+    right_frame.grid(row=1, columnspan=2, column=1, sticky="nsew", padx=10, pady=10)
+    left_frame.grid_columnconfigure((1, 2), weight=1)
+    left_frame.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
+    
     #topic dropdown
     topic_input = uih.input_widget(
-        app,
+        left_frame,
         lambda parent: ctk.CTkEntry(
         parent,
         placeholder_text="(e.g. Music)",
@@ -46,7 +60,7 @@ def user_interface():
     
     #number of questions
     number_of_question = uih.input_widget(
-        app,
+        left_frame,
         lambda parent: ctk.CTkEntry(
         parent,
         placeholder_text="Recommend: 3",
@@ -57,7 +71,7 @@ def user_interface():
     
     #number of paragraph
     number_of_paragraph = uih.input_widget(
-        app,
+        left_frame,
         lambda parent: ctk.CTkEntry(
         parent,
         placeholder_text="Recommend: 3",
@@ -68,7 +82,7 @@ def user_interface():
     
     #langauge dropdown
     language_input = uih.input_widget(
-        app,
+        left_frame,
         lambda parent: ctk.CTkOptionMenu(
         parent,
         values=dh._get_languages(),
@@ -80,7 +94,7 @@ def user_interface():
 
     #difficulty ranging from
     difficulty_range_from_dropdown = uih.input_widget(
-        app,
+        left_frame,
         lambda parent: ctk.CTkOptionMenu(
         parent,
         values=dh._getValues_difficulty_range(),
@@ -92,7 +106,7 @@ def user_interface():
 
     #difficulty ranging to
     difficulty_range_to_dropdown = uih.input_widget(
-        app,
+        left_frame,
         lambda parent: ctk.CTkOptionMenu(
         parent,
         values=dh._getValues_difficulty_range(),
@@ -101,14 +115,6 @@ def user_interface():
         lambda parent: uih._custom_input_label(parent, "Difficulty ranging from"),
         lambda parent: uih._custom_input_warning_label(parent, lambda: False),
         )
-
-    #UX
-    language_input.pack(padx=20, pady=10)
-    topic_input.pack(padx=20, pady=10)
-    number_of_paragraph.pack(padx=20, pady=10)
-    difficulty_range_from_dropdown.pack(padx=20, pady=10)
-    difficulty_range_to_dropdown.pack(padx=20, pady=10)
-    number_of_question.pack(padx=20, pady=10)
 
     def submit():
         #Dropdown
@@ -129,6 +135,7 @@ def user_interface():
         input_state["noq"] = validation_response["states"]["noq_state"]
         print(validation_response["approve"])
         print(validation_response["response_message"])
+        
         # Show Warning(s)
         topic_input.refresh()
         number_of_paragraph.refresh()
@@ -144,24 +151,37 @@ def user_interface():
         store_raw_data.number_of_paragraph = nop
         store_raw_data.number_of_question = noq
 
-        # #test
-        # c1, n1 = store_raw_data.drf
-        # c2, n2 = store_raw_data.drt
-        # rang = gp.Rang((c1, n1), (c2, n2))
-        # g_p = gp.generate_prompt("English", "Shabu", 3, rang, 2)
-        # prompt = gp._parse_formatted_prompt(g_p)
-        # op.time.sleep(1)
-        # print(prompt)
-        # op.automate_browser(prompt)   
+        c1, n1 = store_raw_data.drf
+        c2, n2 = store_raw_data.drt
+        
+        if validation_response["approve"] == True:
+            rang = gp.Rang((c1, n1), (c2, n2))
+            g_p = gp.generate_prompt(store_raw_data.language, 
+                                    store_raw_data.topic, 
+                                    store_raw_data.number_of_paragraph , 
+                                    rang, 
+                                    2)
+            prompt = gp._parse_formatted_prompt(g_p)
+            op.time.sleep(1)
+            response = op.automate_browser(prompt)   
 
-        # dh._set_raw_prompt(store_raw_data)
-
+        # dh._set_raw_prompt(store_raw_data)5
+        print(response)
     def reset():
         dh._reset_raw_prompt()
-    submit_button = uih.custom_button(app, submit, "Submit")
-    reset_button = uih.custom_button(app, reset, 'Reset')
-    submit_button.pack(padx=20, pady=5)
-    reset_button.pack(padx=20, pady=5)
+    
+    submit_button = uih.custom_button(left_frame, submit, "Submit")
+    reset_button = uih.custom_button(left_frame, reset, 'Reset')
+    
+    language_input.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
+    topic_input.grid(row=0, column=2,sticky="nsew", padx=5, pady=5)
+    number_of_paragraph.grid(row=1, columnspan = 2, sticky="nsew", padx=5, pady=5)
+    difficulty_range_from_dropdown.grid(row=2, column=1, sticky="nsew", padx=5, pady=5)
+    difficulty_range_to_dropdown.grid(row=2, column=2, sticky="nsew", padx=5, pady=5)
+    number_of_question.grid(row=3, columnspan = 2, sticky="nsew", padx=5, pady=5)
+    submit_button.grid(row=4, column=1, sticky="nsew", padx=5, pady=5)
+    reset_button.grid(row=4, column=2, sticky="nsew", padx=5, pady=5)
+
     app.mainloop()
 
 if __name__ == "__main__":

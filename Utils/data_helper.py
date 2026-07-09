@@ -10,7 +10,7 @@ class RawData:
         self.drt =drt
         self.number_of_question=number_of_question
 
- 
+
 # Helpers for getting difficulties of ESL
 def _get_difficulty_range():
     with open("Data/difficulty_range.json", "r", encoding="utf-8") as file:

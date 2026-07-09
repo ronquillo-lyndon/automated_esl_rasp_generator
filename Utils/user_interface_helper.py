@@ -56,7 +56,7 @@ def input_widget(parent, input_creator, input_label, warning_label):
     warning, refresh = warning_label(frame)
     if warning:
         warning.grid(row=0, column=1)
-    input_c.grid(row=1, column=0, columnspan=2, sticky="ew")
+    input_c.grid(row=1, column=0, columnspan=2, sticky="nsew", padx = 5, pady = 5)
 
     frame.entry = input_c #for input value
     frame.refresh = refresh #for warning to shows up

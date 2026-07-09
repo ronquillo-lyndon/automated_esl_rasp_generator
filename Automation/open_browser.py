@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import subprocess
 import pyautogui
 import pyperclip #for copying to clipboard
@@ -9,6 +13,7 @@ from Utils import user_interface_helper as uih
 w, h = uih._get_monitor_size()
 
 def automate_browser(prompt):
+    response = ""
     def _open_browser():
         subprocess.Popen([
             r"C:/Program Files/Google/Chrome\Application/chrome.exe",
@@ -18,6 +23,7 @@ def automate_browser(prompt):
         time.sleep(0.5)
     
     def _auto_copy_response(delay):
+        nonlocal response
         time.sleep(delay)
 
         # Click the start
@@ -36,7 +42,7 @@ def automate_browser(prompt):
         # Copy
         pyautogui.hotkey('ctrl', 'c')
 
-        print(pyperclip.paste())
+        response = pyperclip.paste()
 
         pyautogui.click((w * .99), (h * .01))
         time.sleep(0.5)
@@ -58,11 +64,7 @@ def automate_browser(prompt):
     _open_browser()
     _auto_prompt(prompt)
 
+    return response
 
 if __name__ == "__main__":
-    rang = Rang(('A', 1), ('B', 1))
-    g_p = generate_prompt("English", "Shabu", 3, rang, 2)
-    prompt = _parse_formatted_prompt(g_p)
-    time.sleep(1)
-    print(prompt)
-    #automate_browser(prompt)     
+    pass

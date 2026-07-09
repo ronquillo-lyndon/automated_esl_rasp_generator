@@ -49,7 +49,7 @@ def generate_prompt(langauge, topic, number_of_paragraph, range : Rang, number_o
     def _format():
         prompt["Role"] = "ESL Teacher"
         prompt["Title"] = f"{topic}"
-        prompt["Body"] = f"Generate English essay about {topic} in {number_of_paragraph} paragraph format, From {range_f} to {range_t} – Each level should have their own essay. So, I can test my {langauge} speaking and Reading skills. Ensure to add questions in each essay to practice and improve my comprehension and ability to formulate answers in {langauge}. The Questions part should be divided into two section Comprehension and Speaking, Each section should have {number_of_questions} questions"
+        prompt["Body"] = f"Generate English essay about {topic} in {number_of_paragraph} paragraph format, From {range_f} to {range_t} – Each level should have their own essay. So, I can test my {langauge} speaking and Reading skills. Ensure to add questions in each essay to practice and improve my comprehension and ability to formulate answers in {langauge}. The Questions part should be divided into two section Comprehension and Speaking, Each section should have {number_of_questions} questions. [NOTE: STRICTLY FOLLOW THE INSTRUCTION, NO NEED FOR RECOMMENDATION]"
         prompt["Format"] = f"// And the format of 'each' ESL level is: \n[Title {topic}, ESL LEVEL]\ncontent\n[ESSAY PASSAGE]\n[IMPORTANT VOCABULARIES WITH MEANING]//format must be on term-meaning format\nComprehension Questions\n[THE {number_of_questions} QUESTIONS]\nSpeaking Questions\n[THE {number_of_questions} QUESTIONS]"
         return prompt
     _format()
@@ -61,8 +61,4 @@ def _parse_formatted_prompt(Formatted_prompt : dict):
     return f"You are an {temp[0]} assiting his/her student.\nThe topic Title is about {temp[1]}.\n{temp[2]}.\nAnd in Markdown style do this format:\n{temp[3]}"
 
 if __name__ == "__main__":
-    rang = Rang(('A', 1), ('B', 1))
-    g_p = generate_prompt("English", "Shabu", 3, rang, 2)
-    p =_parse_formatted_prompt(g_p)
-    for line in p:
-        print(line)
+    pass
