@@ -5,8 +5,11 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import customtkinter as ctk
+
 from Utils import data_helper as dh
+from Utils import data_validator as dv
 from Utils import user_interface_helper as uih
+
 from Automation import generate_prompt as gp
 from Automation import open_browser as op
 
@@ -107,71 +110,39 @@ def user_interface():
     difficulty_range_to_dropdown.pack(padx=20, pady=10)
     number_of_question.pack(padx=20, pady=10)
 
-    #Verify valid inputs
     def submit():
-        approve = 0 
-
         #Dropdown
-        store_raw_data.language = language.get()
-        store_raw_data.drf = dh._getKey_diffculty_range(difficulty_range_from.get())
-        store_raw_data.drt = dh._getKey_diffculty_range(difficulty_range_to.get())
+        language_input = language.get()
+        drf = dh._getKey_diffculty_range(difficulty_range_from.get())
+        drt = dh._getKey_diffculty_range(difficulty_range_to.get())
         
         #Input
-        store_raw_data.topic = topic_input.entry.get()
-        store_raw_data.number_of_paragraph = number_of_paragraph.entry.get()
-        store_raw_data.number_of_question = number_of_question.entry.get()
-    
-        if topic_input.entry.get() == "":
-            input_state["topic"] = True
-        else:
-            input_state["topic"] = False
-        
-        temp_nop = number_of_paragraph.entry.get()
-        if temp_nop == "":
-            print("Invalid no input")
-            input_state["nop"] = True
-        else:
-            try:
-                temp_nop = int(temp_nop)
-                if 1 <= temp_nop and 5 >= temp_nop:
-                    input_state["nop"] = False
-                    print("Valid")
-                else:
-                    input_state["nop"] = True
-                    print("Invalid input")
-            except:
-                print("except: invalid input")
-                input_state["nop"] = True
-        
-        temp_noq = number_of_question.entry.get()
-        if temp_noq == "":
-            print("Invalid no input")
-            input_state["noq"] = True
-        else:
-            try:
-                temp_noq = int(temp_noq)
-                if 1 <= temp_noq and 5 >= temp_noq:
-                    input_state["noq"] = False
-                    print("Valid")
-                else:
-                    input_state["noq"] = True
-                    print("Invalid input")
-            except:
-                print("except: invalid input")
-                input_state["noq"] = True
-        
+        topic = topic_input.entry.get()
+        nop = number_of_paragraph.entry.get()
+        noq = number_of_question.entry.get()
+
+        validation_response = dv._validate_input(topic, input_state["topic"], 
+                                              nop, input_state["nop"], noq, 
+                                              input_state["noq"])
+        input_state["topic"] = validation_response["states"]["topic_state"]
+        input_state["nop"] = validation_response["states"]["nop_state"]
+        input_state["noq"] = validation_response["states"]["noq_state"]
+        print(validation_response["approve"])
+        print(validation_response["response_message"])
         # Show Warning(s)
         topic_input.refresh()
         number_of_paragraph.refresh()
         number_of_question.refresh()
-
-        #Count-Check if all the required input are False
-        for key, value in input_state.items():
-            if value == True:
-                approve += 1
-
-        if approve == 3:
-            print("Cannot be proceeded due to missing value")
+        
+        #store_data
+        #Dropdown
+        store_raw_data.language = language_input
+        store_raw_data.drf = drf
+        store_raw_data.drt = drt
+        #Input
+        store_raw_data.topic = topic
+        store_raw_data.number_of_paragraph = nop
+        store_raw_data.number_of_question = noq
 
         # #test
         # c1, n1 = store_raw_data.drf
