@@ -133,8 +133,6 @@ def user_interface():
         input_state["topic"] = validation_response["states"]["topic_state"]
         input_state["nop"] = validation_response["states"]["nop_state"]
         input_state["noq"] = validation_response["states"]["noq_state"]
-        print(validation_response["approve"])
-        print(validation_response["response_message"])
         
         # Show Warning(s)
         topic_input.refresh()
@@ -163,10 +161,15 @@ def user_interface():
                                     2)
             prompt = gp._parse_formatted_prompt(g_p)
             op.time.sleep(1)
-            response = op.automate_browser(prompt)   
+            response = op.automate_browser(prompt)
+            
+            # Update textbox with response
+            textbox.configure(state="normal")
+            textbox.delete("1.0", "end")
+            textbox.insert("1.0", response)
+            textbox.configure(state="disabled")
 
-        # dh._set_raw_prompt(store_raw_data)5
-        print(response)
+        # dh._set_raw_prompt(store_raw_data)
     def reset():
         dh._reset_raw_prompt()
     
@@ -181,7 +184,11 @@ def user_interface():
     number_of_question.grid(row=3, columnspan = 2, sticky="nsew", padx=5, pady=5)
     submit_button.grid(row=4, column=1, sticky="nsew", padx=5, pady=5)
     reset_button.grid(row=4, column=2, sticky="nsew", padx=5, pady=5)
-
+    
+    textbox = ctk.CTkTextbox(right_frame, wrap="word")
+    textbox.insert("1.0", response)
+    textbox.configure(state="disabled")
+    textbox.pack(fill="both", expand=True, padx=20, pady=20)
     app.mainloop()
 
 if __name__ == "__main__":
