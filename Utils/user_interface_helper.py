@@ -34,6 +34,8 @@ def _custom_input_warning_label(parent, get_state_warning):
     warning_label =  ctk.CTkLabel(
             parent,
             text = "required",
+            width=50,
+            anchor="e",
             text_color="#e13809",
         )
     #Just like react where it changes when an event happen
@@ -48,15 +50,21 @@ def _custom_input_warning_label(parent, get_state_warning):
     return warning_label, refresh
    
 def input_widget(parent, input_creator, input_label, warning_label):
-    frame = ctk.CTkFrame(parent)
-    input_label(frame).grid(row=0, column=0)
+    frame = ctk.CTkFrame(parent, fg_color="transparent")
+    frame.grid_columnconfigure(0, weight=1)
+    
+    top = ctk.CTkFrame(frame, fg_color="transparent")
+    top.grid(row=0, column=0, sticky="ew")
+    top.grid_columnconfigure(0, weight=1)
+    
+    
+    input_label(top).grid(row=0, column=0, sticky="w")
+
+    warning, refresh = warning_label(top)
+    warning.grid(row=0, column= 1, sticky="e")
 
     input_c = input_creator(frame)
-    
-    warning, refresh = warning_label(frame)
-    if warning:
-        warning.grid(row=0, column=1)
-    input_c.grid(row=1, column=0, columnspan=2, sticky="nsew", padx = 5, pady = 5)
+    input_c.grid(row=1, column = 0, sticky = "ew", padx = 5, pady = 5)
 
     frame.entry = input_c #for input value
     frame.refresh = refresh #for warning to shows up

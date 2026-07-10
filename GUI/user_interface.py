@@ -15,13 +15,13 @@ def run_automation():
     dh.transcribe_prompt() # Genrate prompt
     op.time.sleep(0.5)
     prompt = dh._get_formatted_prompt()
-    response = op.automate_browser(prompt)
-    valid, message = dv._validate_response(response)
-    print(response)
-    print(valid)
-    if valid:
-        dh._set_response(response)
-    print(message)
+    # response = op.automate_browser(prompt)
+    # valid, message = dv._validate_response(response)
+    # print(response)
+    # print(valid)
+    # if valid:
+    #     dh._set_response(response)
+    print(prompt)
 
 def reset():
     dh._reset_raw_prompt()
@@ -30,8 +30,10 @@ def reset():
 
 def user_interface():
     w,h=uih._get_monitor_size()
+    default_w = int(w/1.8)
+    default_h = int(h/1.6)
     app = ctk.CTk()
-    app.geometry(f"{(int(w/2))}x{int(h/1.8)}")
+    app.geometry(f"{default_w}x{default_h}")
     app.title("Automated ESL RASP Generator")
     ctk.set_appearance_mode("Dark")
     ctk.set_default_color_theme("blue")
@@ -49,27 +51,41 @@ def user_interface():
 
 
     #UX
-    app.grid_columnconfigure((0, 0), weight=1)
-    app.grid_columnconfigure((0, 1), weight=1)
-    app.grid_columnconfigure((0, 2), weight=1)
-    left_frame = ctk.CTkFrame(app)
-    right_frame = ctk.CTkFrame(app)
-    left_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
-    right_frame.grid(row=1, columnspan=2, column=1, sticky="nsew", padx=10, pady=10)
-    left_frame.grid_columnconfigure((1, 2), weight=1)
-    left_frame.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
+    main_frame = ctk.CTkFrame(app)
+    main_frame.grid(row=1, column=1)
+    main_frame.place(relx=0.5, rely=0.5, anchor="center")
+    main_frame.configure(width=default_w, height=default_h)
+    main_frame.grid_columnconfigure(0, weight=1) 
+    main_frame.grid_columnconfigure(1, weight=2)
+    main_frame.grid_rowconfigure(0, weight=1)
+
+    left_frame = ctk.CTkFrame(main_frame) # for inputs
+    right_frame = ctk.CTkFrame(main_frame) # for response
+
+    left_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
+    right_frame.grid(row=1, column=1, sticky="nsew", padx=5, pady=5)
+    
+    left_frame.grid_columnconfigure(1, weight=1)
+    left_frame.grid_rowconfigure((1, 2, 3, 4, 5, 6, 7, 8), weight=1)
+
+    title = ctk.CTkLabel(
+        main_frame,
+        text="Automated ESL RASP Generator",
+        font=("Arial", (default_h) * 0.10)
+    )
+    title.grid(row=0, columnspan=2, column=0, padx=10, pady=10)
 
     textbox = ctk.CTkTextbox(right_frame, wrap="word")
     textbox.insert("1.0", response)
     textbox.configure(state="disabled")
-    textbox.pack(fill="both", expand=True, padx=20, pady=20)
+    textbox.pack(fill="both", expand=True, padx=5, pady=5)
 
     #topic dropdown5
     topic_input = uih.input_widget(
         left_frame,
         lambda parent: ctk.CTkEntry(
         parent,
-        placeholder_text="(e.g. Music)",
+        placeholder_text="(e.g. Music)"
         ), 
         lambda parent: uih._custom_input_label(parent, "Topic"),
         lambda parent: uih._custom_input_warning_label(parent, lambda: input_state["topic"]),
@@ -80,7 +96,7 @@ def user_interface():
         left_frame,
         lambda parent: ctk.CTkEntry(
         parent,
-        placeholder_text="Recommend: 3",
+        placeholder_text="Recommend: 3"
         ), 
         lambda parent: uih._custom_input_label(parent, "Number of Questions"),
         lambda parent: uih._custom_input_warning_label(parent, lambda: input_state["noq"]),
@@ -91,7 +107,7 @@ def user_interface():
         left_frame,
         lambda parent: ctk.CTkEntry(
         parent,
-        placeholder_text="Recommend: 3",
+        placeholder_text="Recommend: 3"
         ), 
         lambda parent: uih._custom_input_label(parent, "Number of Paragraphs"),
         lambda parent: uih._custom_input_warning_label(parent, lambda: input_state["nop"]),
@@ -175,19 +191,19 @@ def user_interface():
                     # textbox.delete("1.0", "end")
                     # textbox.insert("1.0", response)
                     # textbox.configure(state="disabled")
-        run_automation()
+            run_automation()
     
     submit_button = uih.custom_button(left_frame, validate_data, "Submit")
     reset_button = uih.custom_button(left_frame, reset, 'Reset')
 
-    language_input.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
-    topic_input.grid(row=0, column=2,sticky="nsew", padx=5, pady=5)
-    number_of_paragraph.grid(row=1, columnspan = 2, sticky="nsew", padx=5, pady=5)
-    difficulty_range_from_dropdown.grid(row=2, column=1, sticky="nsew", padx=5, pady=5)
-    difficulty_range_to_dropdown.grid(row=2, column=2, sticky="nsew", padx=5, pady=5)
-    number_of_question.grid(row=3, columnspan = 2, sticky="nsew", padx=5, pady=5)
-    submit_button.grid(row=4, column=1, sticky="nsew", padx=5, pady=5)
-    reset_button.grid(row=4, column=2, sticky="nsew", padx=5, pady=5)
+    language_input.grid(row=1, column=1, sticky="nsew", padx=5, pady=5)
+    topic_input.grid(row=2, column=1,sticky="nsew", padx=5, pady=5)
+    difficulty_range_from_dropdown.grid(row=3, column=1, sticky="nsew", padx=5, pady=5)
+    difficulty_range_to_dropdown.grid(row=4, column=1, sticky="nsew", padx=5, pady=5)
+    number_of_paragraph.grid(row=5, column = 1, sticky="nsew", padx=5, pady=5)
+    number_of_question.grid(row=6, column = 1, sticky="nsew", padx=5, pady=5)
+    submit_button.grid(row=7, column=1, sticky="nsew", padx=5, pady=5)
+    reset_button.grid(row=8, column=1, sticky="nsew", padx=5, pady=5)
     
     app.mainloop()
 
