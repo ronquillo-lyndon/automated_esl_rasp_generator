@@ -9,9 +9,24 @@ import customtkinter as ctk
 from Utils import data_helper as dh
 from Utils import data_validator as dv
 from Utils import user_interface_helper as uih
-
-from Automation import generate_prompt as gp
 from Automation import open_browser as op
+
+def run_automation():
+    dh.transcribe_prompt() # Genrate prompt
+    op.time.sleep(0.5)
+    prompt = dh._get_formatted_prompt()
+    response = op.automate_browser(prompt)
+    valid, message = dv._validate_response(response)
+    print(response)
+    print(valid)
+    if valid:
+        dh._set_response(response)
+    print(message)
+
+def reset():
+    dh._reset_raw_prompt()
+    dh._reset_formatted_prompt()
+    dh._reset_response()
 
 def user_interface():
     w,h=uih._get_monitor_size()
@@ -24,9 +39,6 @@ def user_interface():
 
     difficulty_range_placeholder = dh._getValues_difficulty_range()[0]
 
-    #data
-    store_raw_data = dh.RawData()
-    
     #State of input when required
     input_state = {"topic": False, "nop": False, "noq": False}
 
@@ -46,8 +58,13 @@ def user_interface():
     right_frame.grid(row=1, columnspan=2, column=1, sticky="nsew", padx=10, pady=10)
     left_frame.grid_columnconfigure((1, 2), weight=1)
     left_frame.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
-    
-    #topic dropdown
+
+    textbox = ctk.CTkTextbox(right_frame, wrap="word")
+    textbox.insert("1.0", response)
+    textbox.configure(state="disabled")
+    textbox.pack(fill="both", expand=True, padx=20, pady=20)
+
+    #topic dropdown5
     topic_input = uih.input_widget(
         left_frame,
         lambda parent: ctk.CTkEntry(
@@ -116,7 +133,9 @@ def user_interface():
         lambda parent: uih._custom_input_warning_label(parent, lambda: False),
         )
 
-    def submit():
+    def validate_data():
+        store_raw_data = dh.RawData()
+
         #Dropdown
         language_input = language.get()
         drf = dh._getKey_diffculty_range(difficulty_range_from.get())
@@ -149,33 +168,18 @@ def user_interface():
         store_raw_data.number_of_paragraph = nop
         store_raw_data.number_of_question = noq
 
-        c1, n1 = store_raw_data.drf
-        c2, n2 = store_raw_data.drt
-        
         if validation_response["approve"] == True:
-            rang = gp.Rang((c1, n1), (c2, n2))
-            g_p = gp.generate_prompt(store_raw_data.language, 
-                                    store_raw_data.topic, 
-                                    store_raw_data.number_of_paragraph , 
-                                    rang, 
-                                    2)
-            prompt = gp._parse_formatted_prompt(g_p)
-            op.time.sleep(1)
-            response = op.automate_browser(prompt)
-            
-            # Update textbox with response
-            textbox.configure(state="normal")
-            textbox.delete("1.0", "end")
-            textbox.insert("1.0", response)
-            textbox.configure(state="disabled")
-
-        # dh._set_raw_prompt(store_raw_data)
-    def reset():
-        dh._reset_raw_prompt()
+            dh._set_raw_prompt(store_raw_data)
+                    # Update textbox with response5
+                    # textbox.configure(state="normal")
+                    # textbox.delete("1.0", "end")
+                    # textbox.insert("1.0", response)
+                    # textbox.configure(state="disabled")
+        run_automation()
     
-    submit_button = uih.custom_button(left_frame, submit, "Submit")
+    submit_button = uih.custom_button(left_frame, validate_data, "Submit")
     reset_button = uih.custom_button(left_frame, reset, 'Reset')
-    
+
     language_input.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
     topic_input.grid(row=0, column=2,sticky="nsew", padx=5, pady=5)
     number_of_paragraph.grid(row=1, columnspan = 2, sticky="nsew", padx=5, pady=5)
@@ -185,10 +189,6 @@ def user_interface():
     submit_button.grid(row=4, column=1, sticky="nsew", padx=5, pady=5)
     reset_button.grid(row=4, column=2, sticky="nsew", padx=5, pady=5)
     
-    textbox = ctk.CTkTextbox(right_frame, wrap="word")
-    textbox.insert("1.0", response)
-    textbox.configure(state="disabled")
-    textbox.pack(fill="both", expand=True, padx=20, pady=20)
     app.mainloop()
 
 if __name__ == "__main__":

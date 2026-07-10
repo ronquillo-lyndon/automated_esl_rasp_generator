@@ -27,7 +27,7 @@ def automate_browser(prompt):
         time.sleep(delay)
 
         # Click the start
-        pyautogui.click((w/2), (h * .40))
+        pyautogui.click((w/2), (h * .35))
 
         # Scroll down
         for _ in range(50):

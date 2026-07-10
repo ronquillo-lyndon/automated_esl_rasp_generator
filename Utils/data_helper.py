@@ -1,5 +1,13 @@
 import json
+from pathlib import Path
+import sys
 
+# ensure project root is on sys.path so sibling packages can be imported
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from Automation import generate_prompt as gp
+
+import customtkinter as ctk
 # data as single object
 class RawData:
     def __init__(self, language="", topic="", number_of_paragraph=0, drf="", drt="", number_of_question=0):
@@ -48,7 +56,7 @@ def _reset_raw_prompt():
             "topic": "",
             "number_of_paragraph": 0,
             "difficulty_range": {"difficulty_range_from": "", "difficulty_range_to": ""},
-            "number_of_question": 1
+            "number_of_question": 0
         }
     with open("Data/store_data.json", "w") as file:
         json.dump(store_data, file, indent=4)
@@ -116,5 +124,20 @@ def _get_languages():
         language = json.load(file)
     return language
 
+
+#Generate prompt
+def transcribe_prompt():
+    raw_prompt = _get_raw_prompt()
+    c1, n1 = raw_prompt["difficulty_range"]["difficulty_range_from"]
+    c2, n2 = raw_prompt["difficulty_range"]["difficulty_range_to"]
+    rang = gp.Rang((c1, n1), (c2, n2))
+    g_p = gp.generate_prompt(raw_prompt["language"], 
+                            raw_prompt["topic"], 
+                            raw_prompt["number_of_paragraph"], 
+                            rang, 
+                            2)
+    prompt = gp._parse_formatted_prompt(g_p)
+    _set_formatted_prompt(prompt)
+        
 if __name__ == "__main__":
-    pass
+    transcribe_prompt()

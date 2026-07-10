@@ -1,13 +1,13 @@
 {
     "raw_prompt": {
-        "language": "English",
-        "topic": "Engineer",
-        "number_of_paragraph": "3",
+        "language": "",
+        "topic": "",
+        "number_of_paragraph": 0,
         "difficulty_range": {
-            "difficulty_range_from": "A1",
-            "difficulty_range_to": "A1"
+            "difficulty_range_from": "",
+            "difficulty_range_to": ""
         },
-        "number_of_question": "3"
+        "number_of_question": 0
     },
     "formatted_prompt": "",
     "response": ""

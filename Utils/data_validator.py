@@ -1,3 +1,8 @@
+
+#code response validator
+start_response = "src_ch3ck-14" # start response code
+end_response = "erc_che3ck-12" # end response code
+
 #Verify valid inputs
 def _validate_input(topic_v, topic_s, nop_v, nop_s, noq_v, noq_s):
     #s = state, v = value
@@ -55,3 +60,15 @@ def _validate_input(topic_v, topic_s, nop_v, nop_s, noq_v, noq_s):
                 "noq_state": noq_state}, 
             "approve": approve,
             "response_message": response_message}
+
+def _validate_response(response):
+    start_cut_response = response[:12]
+    end_cut_response = response[-13:]
+    if len(response) < 12:
+        return False, "Automation Failed to Response. Try again!"
+    if start_cut_response == start_response and end_cut_response == end_cut_response:
+        return True, "Sucessful Response!"
+    return False, "Automation Failed to Response. Try again!"
+
+if __name__ == "__main__":
+    pass
