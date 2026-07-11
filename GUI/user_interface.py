@@ -11,31 +11,44 @@ from Utils import data_validator as dv
 from Utils import user_interface_helper as uih
 from Automation import open_browser as op
 
+from .pop_up_message import show_input_warning, show_submit_message
+
+
 def run_automation():
     dh.transcribe_prompt() # Genrate prompt
     op.time.sleep(0.5)
     prompt = dh._get_formatted_prompt()
-    # response = op.automate_browser(prompt)
-    # valid, message = dv._validate_response(response)
-    # print(response)
-    # print(valid)
-    # if valid:
-    #     dh._set_response(response)
-    print(prompt)
+    response = op.automate_browser(prompt)
+    valid, message = dv._validate_response(response)
+    if valid:
+        dh._set_response(response)
+    else:
+        dh._set_response(message)
 
-def reset():
+def reset(textbox):
+    textbox.configure(state="normal")
+    textbox.delete("1.0", "end")
+    textbox.configure(state="disabled")
     dh._reset_raw_prompt()
     dh._reset_formatted_prompt()
     dh._reset_response()
 
+def show_response(textbox):
+    #Update textbox with response
+    response = dh._get_response()
+    textbox.configure(state="normal")
+    textbox.delete("1.0", "end")
+    textbox.insert("1.0", response)
+    textbox.configure(state="disabled")
+
 def user_interface():
     w,h=uih._get_monitor_size()
-    default_w = int(w/1.8)
-    default_h = int(h/1.6)
+    default_w = int(w/1.7)
+    default_h = int(h/1.4)
     app = ctk.CTk()
     app.geometry(f"{default_w}x{default_h}")
     app.title("Automated ESL RASP Generator")
-    ctk.set_appearance_mode("Dark")
+    ctk.set_appearance_mode("Light")
     ctk.set_default_color_theme("blue")
     response = ""
 
@@ -59,21 +72,30 @@ def user_interface():
     main_frame.grid_columnconfigure(1, weight=2)
     main_frame.grid_rowconfigure(0, weight=1)
 
+    top_frame = ctk.CTkFrame(main_frame)
     left_frame = ctk.CTkFrame(main_frame) # for inputs
     right_frame = ctk.CTkFrame(main_frame) # for response
 
-    left_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
-    right_frame.grid(row=1, column=1, sticky="nsew", padx=5, pady=5)
+    top_frame.grid(row=0, columnspan = 2, column=0, sticky="nsew", padx=2, pady=2)
+    left_frame.grid(row=1, column=0, sticky="nsew", padx=2, pady=2)
+    right_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
     
     left_frame.grid_columnconfigure(1, weight=1)
     left_frame.grid_rowconfigure((1, 2, 3, 4, 5, 6, 7, 8), weight=1)
 
     title = ctk.CTkLabel(
-        main_frame,
+        top_frame,
         text="Automated ESL RASP Generator",
-        font=("Arial", (default_h) * 0.10)
+        font=("Arial", (default_h) * 0.08)
     )
-    title.grid(row=0, columnspan=2, column=0, padx=10, pady=10)
+    title.grid(row=0, column=0, padx=30, pady=10)
+
+    description = ctk.CTkLabel(
+        top_frame,
+        text="English as Second Language, Reading and Speaking Practice is an automated generator through the process of auto-clicking and Chatgpt's Free text generation. \n Note: Requirement: Chrome. You shoul close all of your chrome(s), so it will produce a result — if not, try again!",
+        font=("Arial", (default_h) * 0.02)
+    )
+    description.grid(row=1, column=0, padx=30, pady=5)
 
     textbox = ctk.CTkTextbox(right_frame, wrap="word")
     textbox.insert("1.0", response)
@@ -184,17 +206,18 @@ def user_interface():
         store_raw_data.number_of_paragraph = nop
         store_raw_data.number_of_question = noq
 
-        if validation_response["approve"] == True:
+        def proceed_automation():
             dh._set_raw_prompt(store_raw_data)
-                    # Update textbox with response5
-                    # textbox.configure(state="normal")
-                    # textbox.delete("1.0", "end")
-                    # textbox.insert("1.0", response)
-                    # textbox.configure(state="disabled")
             run_automation()
+            show_response(textbox)
+        submit_message = f"The language you want to practice is {language_input} and the topic is about {topic} with {nop} paragraph(s) each level. The ESL level is ranging from {drf} to {drt} with {noq} question(s) to practice. \n\n Are you sure, you want to proceed with this idea?"
+        if validation_response["approve"] == True:
+            show_submit_message(app, proceed_automation, submit_message)
+        else:
+            show_input_warning(app, validation_response["response_message"])
     
     submit_button = uih.custom_button(left_frame, validate_data, "Submit")
-    reset_button = uih.custom_button(left_frame, reset, 'Reset')
+    reset_button = uih.custom_button(right_frame, lambda: reset(textbox), 'Reset')
 
     language_input.grid(row=1, column=1, sticky="nsew", padx=5, pady=5)
     topic_input.grid(row=2, column=1,sticky="nsew", padx=5, pady=5)
@@ -203,7 +226,8 @@ def user_interface():
     number_of_paragraph.grid(row=5, column = 1, sticky="nsew", padx=5, pady=5)
     number_of_question.grid(row=6, column = 1, sticky="nsew", padx=5, pady=5)
     submit_button.grid(row=7, column=1, sticky="nsew", padx=5, pady=5)
-    reset_button.grid(row=8, column=1, sticky="nsew", padx=5, pady=5)
+    
+    reset_button.pack(padx=5, pady=5)
     
     app.mainloop()
 
